@@ -1,64 +1,94 @@
-from file_mover import *
+import json
 import os
-import PIL.Image, PIL.ImageTk
-from PyAutoClassroom import Student
 from tkinter import *
+import PIL.Image
+import PIL.ImageTk
+from PyAutoClassroom import Student
 
+if os.name !='nt':
+    exit()
+
+#Json Loader
+dirname = str(os.path.dirname(__file__))
+
+data_json = open(dirname + '\\data\\info.json')
+classes_json = open(dirname + '\\data\\classes.json')
+data = json.load(data_json)
+classes_load = json.load(classes_json)
+data_json.close()
+classes_json.close()
+
+#Main GUI
 root = Tk()
 
+state = NORMAL
+
 main_window_settings = {
-    root.iconbitmap(file_path['CWD'] + '\\Photos\\icon.ico'),
+    root.iconbitmap(dirname + '\\Photos\\icon.ico'),
     root.title('PyAutoClassroom'),
     root.geometry('500x500'),
     root.minsize(500,500),
     root.maxsize(500,500),
     # root.configure(background = '#24292e'),
-}
+    }
 
 photos = {
-    'travis_scott' : PIL.ImageTk.PhotoImage(PIL.Image.open(file_path['CWD'] + '\\Photos\\travisscott.jpg').resize((200,200))),    
-    'execute_code_image' : PIL.ImageTk.PhotoImage(PIL.Image.open(file_path['CWD'] + "\\Photos\\download.png").resize((40,40)))
-}
+    # 'travis_scott' : PIL.ImageTk.PhotoImage(PIL.Image.open(dirname + '\\Photos\\travisscott.jpg').resize((200,200))),    
+    'execute_code_image' : PIL.ImageTk.PhotoImage(PIL.Image.open(dirname + "\\Photos\\download.png").resize((40,40))),
+    'rick_roll' : PIL.ImageTk.PhotoImage(PIL.Image.open(dirname + '\\Photos\\rickroll.png'))}
 
-def execute_code():
-    pass
-
-def add_to_queue():
-    pass
-
-def save_login_def():
-    os.chdir(file_path['CWD'] + '\\data')
-    if 'info.txt' not in os.listdir(file_path['CWD'] + '\\data'):
-        with open('info.txt', 'x') as f:
-            f.write(email_entry.get() + '\n' + password_entry.get())
-    else:
-        with open('info.txt', 'w') as j:
-            j.write(email_entry.get() + '\n' + password_entry.get())
-
-
-text_input = Entry(root, bd=2, width=50,)
+text_input = Entry(root, bd=2, width=50,state=state)
 text_input.place(
     relx=0.315,
     rely=0.0,
     anchor='n')
-text_input.insert(0,'Enter your classes here:')
+text_input.insert(0, 'Classes:')
 
-
-email_entry = Entry(root, width=24, bd=2)
+#Emai entry
+email_entry = Entry(root, width=24, bd=2,state=state)
 email_entry.place(
     relx=0.159,
     rely=0.05,
     anchor="n")
-email_entry.insert(0, 'Enter your email:')
+email_entry.insert(0, str(data["email"]))
 
-
-password_entry = Entry(root,width=24, bd=2 )
+#Password entry
+password_entry = Entry(root, width=24, bd=2,state=state)
 password_entry.place(
     relx=0.472,
     rely=0.05,
     anchor="n")
-password_entry.insert(0,'Enter your password:')
+password_entry.insert(0, ''.join('*' for i in range(len(data["password"]))))
 
+def execute_code():
+    student_load = Student(str(data["email"]),str(data["password"]))
+    student_load.login()
+    
+def first_time_setup():
+    pass
+
+def add_to_queue():
+    global flist
+    flist = []
+    var = ''
+    txtinput = str(text_input.get())
+    for i in txtinput:
+        if i.isspace():
+            flist.append(var)
+            var = ''
+        else:
+            var = var + i
+    flist.append(var)
+    print(flist)
+
+def save_login_def():
+    data_json = open(dirname + '\\data\\info.json','w')
+    data["email"] = str(email_entry.get())
+    data["password"] = str(password_entry.get())
+    json.dump(data,data_json)
+    data_json.close()
+    password_entry.delete(0,END)
+    password_entry.insert(0, ''.join('*' for i in range(len(data["password"]))))
 
 execute_button = Button(root,command = execute_code,padx=50, pady=50, image=photos['execute_code_image'])
 execute_button.place(
@@ -87,23 +117,16 @@ class_queue.place(
     rely=0.32,
     anchor='e')
 
-save_login_info = Button(root, text='Login', padx=13,pady=5, command=save_login_def)
+save_login_info = Button(root, text='Login', padx=13,pady=5, command=save_login_def,state=state)
 save_login_info.place(
     relx=0.557,
     rely=0.2,
     anchor='center')
 
-add_to_queue_button = Button(root, text='Save', padx=15, pady=5, relief='raised', command=add_to_queue)
+add_to_queue_button = Button(root, text='Save', padx=15, pady=5, relief='raised', command=add_to_queue,state=state)
 add_to_queue_button.place(
     relx=0.557,
     rely=0.094,
     anchor='n')
-
-# my_image = Label(root, padx=2+00, pady=200, image=photos['travis_scott'])
-# my_image.place(
-#     rely=0.37,
-#     relx=0.3,
-#     anchor='center')
-
 
 root.mainloop()

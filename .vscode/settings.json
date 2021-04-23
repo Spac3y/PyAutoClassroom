@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "C:\\Users\\Vlad\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe"
+    "python.pythonPath": "C:\\Users\\Vlad\\AppData\\Local\\Microsoft\\WindowsApps\\python3.7.exe",
+    "VSCord.enabled": true
 }

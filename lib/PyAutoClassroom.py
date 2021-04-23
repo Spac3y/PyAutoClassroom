@@ -1,9 +1,10 @@
 from datetime import datetime
-from file_mover import *
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
+import os
 import time
+
 
 class Student:
     def __init__(self,email,password, maximize_window = False):
@@ -11,8 +12,9 @@ class Student:
         self.password = password
         chrome_Options = Options()
         chrome_Options.add_argument("--use-fake-ui-for-media-stream")
+        self.path = str(os.path.dirname(__file__)).replace('\\lib','')
         self.driver = webdriver.Chrome(
-           str(file_path['CWD'])+'\\chromedriver.exe' , chrome_options=chrome_Options)
+           self.path + '\\chromedriver.exe' , chrome_options=chrome_Options)
         if maximize_window:
             self.driver.maximize_window()
         else:
@@ -135,3 +137,6 @@ class Student:
         print(
             f'[{datetime.now().hour}:{datetime.now().minute}:{datetime.now().second}] Exiting!')
         self.driver.quit()
+    
+    def first_time_setup(self):
+        pass
