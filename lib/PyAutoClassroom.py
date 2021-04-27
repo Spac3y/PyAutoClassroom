@@ -12,9 +12,9 @@ class Student:
         self.password = password
         chrome_Options = Options()
         chrome_Options.add_argument("--use-fake-ui-for-media-stream")
-        self.path = str(os.path.dirname(__file__)).replace('\\lib','')
+        self.path = str(os.path.dirname(__file__)).replace('lib','')
         self.driver = webdriver.Chrome(
-           self.path + '\\chromedriver.exe' , chrome_options=chrome_Options)
+           self.path + 'chromedriver.exe' , chrome_options=chrome_Options)
         if maximize_window:
             self.driver.maximize_window()
         else:
@@ -69,7 +69,6 @@ class Student:
                 print(i)
 
     def enter_course(self, class_name =None, enter_time = 00, check_if_person_present = True):
-
         has_gotten_error = False
         self.driver.get('https://classroom.google.com/u/0/h')
         time.sleep(5)
@@ -138,5 +137,35 @@ class Student:
             f'[{datetime.now().hour}:{datetime.now().minute}:{datetime.now().second}] Exiting!')
         self.driver.quit()
     
-    def first_time_setup(self):
-        pass
+    def first_setup(self):
+        got_error = False
+        class_list = []
+        self.driver.get("https://classroom.google.com")
+        time.sleep(4)
+        classes = self.driver.find_elements_by_xpath(
+            "//div[@class = 'YVvGBb csjh4b']")
+        for clas in classes:
+            class_list.append(clas.text)
+        i = 0 
+        for clas in classes:
+            got_error = False
+            if clas.text == class_list[i]:
+                current_class = clas.text
+                clas.click()
+                time.sleep(1)
+                try:
+                    self.driver.find_element_by_class_name('VkMwfe')
+                except NoSuchElementException:
+                    got_error = True
+                if got_error:
+                    class_list.remove(current_class)
+                self.driver.back()
+                time.sleep(3.5)
+                i += 1
+        return class_list
+
+def main():
+    pass
+
+if __name__ == '__main__':
+    main()

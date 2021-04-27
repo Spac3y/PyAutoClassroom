@@ -33,7 +33,7 @@ main_window_settings = {
     }
 
 photos = {
-    # 'travis_scott' : PIL.ImageTk.PhotoImage(PIL.Image.open(dirname + '\\Photos\\travisscott.jpg').resize((200,200))),    
+    'travis_scott' : PIL.ImageTk.PhotoImage(PIL.Image.open(dirname + '\\Photos\\travisscott.jpg').resize((200,200))),    
     'execute_code_image' : PIL.ImageTk.PhotoImage(PIL.Image.open(dirname + "\\Photos\\download.png").resize((40,40))),
     'rick_roll' : PIL.ImageTk.PhotoImage(PIL.Image.open(dirname + '\\Photos\\rickroll.png'))}
 
@@ -65,7 +65,9 @@ def execute_code():
     student_load.login()
     
 def first_time_setup():
-    pass
+    student_load = Student(str(data["email"]), str(data["password"]))
+    student_load.login()
+    student_load.first_setup()
 
 def add_to_queue():
     global flist
@@ -117,15 +119,21 @@ class_queue.place(
     rely=0.32,
     anchor='e')
 
-save_login_info = Button(root, text='Login', padx=13,pady=5, command=save_login_def,state=state)
+save_login_info = Button(root, text='Login', padx=15,pady=5, command=save_login_def,state=state)
 save_login_info.place(
-    relx=0.557,
-    rely=0.2,
-    anchor='center')
+    relx=0.42,
+    rely=0.093,
+    anchor='n')
 
 add_to_queue_button = Button(root, text='Save', padx=15, pady=5, relief='raised', command=add_to_queue,state=state)
 add_to_queue_button.place(
     relx=0.557,
+    rely=0.094,
+    anchor='n')
+
+first_setup_button = Button(root, text='First time Setup',padx = 30, pady =5,command = first_time_setup)
+first_setup_button.place(
+    relx=0.156,
     rely=0.094,
     anchor='n')
 
