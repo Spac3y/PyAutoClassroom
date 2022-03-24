@@ -138,3 +138,4 @@ first_setup_button.place(
     anchor='n')
 
 root.mainloop()
+
